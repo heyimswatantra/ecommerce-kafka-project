@@ -1,15 +1,17 @@
 package com.example.common.events;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseEvent {
+public class BaseEvent {
 
     private UUID eventId;
 

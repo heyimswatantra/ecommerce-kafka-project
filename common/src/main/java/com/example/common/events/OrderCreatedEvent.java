@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderCreatedEvent extends BaseEvent {

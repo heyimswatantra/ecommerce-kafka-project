@@ -1,10 +1,11 @@
 package com.example.common.events;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentCompletedEvent extends BaseEvent {
