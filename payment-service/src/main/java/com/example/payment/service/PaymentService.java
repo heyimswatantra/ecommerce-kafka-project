@@ -3,6 +3,8 @@ package com.example.payment.service;
 import com.example.common.constants.KafkaTopics;
 import com.example.common.events.OrderCreatedEvent;
 import com.example.common.events.PaymentCompletedEvent;
+import com.example.common.events.PaymentRefundRequestedEvent;
+import com.example.common.events.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -44,6 +46,37 @@ public class PaymentService {
 
         } catch (Exception e) {
             throw new RuntimeException("Payment processing failed", e);
+        }
+    }
+
+    public void refund(PaymentRefundRequestedEvent event) {
+
+        try {
+            log.info(
+                    "[{}] Refunding payment {}",
+                    event.getUniqueTxnId(),
+                    event.getPaymentId());
+
+            Thread.sleep(1000);
+
+            PaymentRefundedEvent paymentRefundedEvent = PaymentRefundedEvent.builder()
+                    .paymentRefundId(event.getPaymentRefundId())
+                    .orderId(event.getOrderId())
+                    .paymentId(event.getPaymentId())
+                    .reason(event.getReason())
+                    .createdAt(Instant.now())
+                    .eventId(event.getEventId())
+                    .uniqueTxnId(event.getUniqueTxnId())
+                    .eventType("PAYMENT-REFUNDED")
+                    .build();
+
+            kafkaTemplate.send(
+                    KafkaTopics.PAYMENT_REFUNDED,
+                    event.getOrderId().toString(),
+                    paymentRefundedEvent);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Payment refund failed", e);
         }
     }
 }
