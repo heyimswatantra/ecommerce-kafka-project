@@ -4,12 +4,14 @@ import com.example.common.constants.KafkaTopics;
 import com.example.common.events.OrderCreatedEvent;
 import com.example.order.dto.CreateOrderRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -32,6 +34,9 @@ public class OrderService {
                 .build();
 
         kafkaTemplate.send(KafkaTopics.ORDER_EVENTS, orderId, event);
+
+        log.info("order sentt: \n {}", event);
+
 
         return orderId;
     }

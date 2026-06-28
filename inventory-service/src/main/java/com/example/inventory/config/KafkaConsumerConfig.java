@@ -1,6 +1,5 @@
 package com.example.inventory.config;
 
-import com.example.common.events.OrderCreatedEvent;
 import com.example.common.events.PaymentCompletedEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -11,6 +10,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -42,14 +42,17 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent>
-    kafkaListenerContainerFactory(
-            ConsumerFactory<String, PaymentCompletedEvent> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> kafkaListenerContainerFactory(
+            ConsumerFactory<String, PaymentCompletedEvent> consumerFactory,
+            DefaultErrorHandler errorHandler
+    ) {
 
         ConcurrentKafkaListenerContainerFactory<String, PaymentCompletedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
+
+        factory.setCommonErrorHandler(errorHandler);
 
         return factory;
     }

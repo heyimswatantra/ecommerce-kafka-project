@@ -23,6 +23,6 @@ public class PaymentEventConsumer {
 
         log.info("Payment completed event: {}", event.getOrderId());
 
-        inventoryService.reserveInventory(event);
+        inventoryService.reserveInventoryAfter3Attempts(event);
     }
 }

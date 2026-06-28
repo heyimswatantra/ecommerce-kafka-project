@@ -33,7 +33,7 @@ public class PaymentService {
                     .status("SUCCESS")
                     .build();
 
-            log.info("Order event received: \n {}", order);
+            log.info("Order event received: \n {} {}", order, order.getUniqueTxnId());
             kafkaTemplate.send(
                     KafkaTopics.PAYMENT_EVENTS,
                     order.getOrderId().toString(),

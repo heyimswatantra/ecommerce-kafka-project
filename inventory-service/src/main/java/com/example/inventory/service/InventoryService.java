@@ -2,7 +2,6 @@ package com.example.inventory.service;
 
 import com.example.common.constants.KafkaTopics;
 import com.example.common.events.InventoryReservedEvent;
-import com.example.common.events.OrderCreatedEvent;
 import com.example.common.events.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -18,6 +18,8 @@ import java.util.UUID;
 public class InventoryService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    private final AtomicInteger attempts = new AtomicInteger();
 
     public void reserveInventory(PaymentCompletedEvent payment) {
 
@@ -45,5 +47,26 @@ public class InventoryService {
         } catch (Exception e) {
             throw new RuntimeException("Payment processing failed", e);
         }
+    }
+
+    public void reserveInventoryAfter3Attempts(PaymentCompletedEvent payment) {
+
+        int currentAttempt = attempts.incrementAndGet();
+
+        log.info(
+                "[{}] Inventory attempt {}",
+                payment.getUniqueTxnId(),
+                currentAttempt
+        );
+
+        // mock retry logic
+        if (currentAttempt < 4) {
+            throw new RuntimeException("Inventory DB unavailable");
+        }
+
+//        push to {topic}-dlq
+//        throw new RuntimeException("Something went wrong");
+
+        log.info("Inventory reserved.");
     }
 }
