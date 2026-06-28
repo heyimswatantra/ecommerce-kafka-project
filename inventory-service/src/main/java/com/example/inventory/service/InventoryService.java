@@ -1,6 +1,7 @@
-package com.example.payment.service;
+package com.example.inventory.service;
 
 import com.example.common.constants.KafkaTopics;
+import com.example.common.events.InventoryReservedEvent;
 import com.example.common.events.OrderCreatedEvent;
 import com.example.common.events.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
@@ -14,31 +15,30 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentService {
+public class InventoryService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void processPayment(OrderCreatedEvent order) {
+    public void reserveInventory(PaymentCompletedEvent payment) {
 
         try {
             Thread.sleep(2000); // simulate payment delay
 
-            PaymentCompletedEvent event = PaymentCompletedEvent.builder()
+            InventoryReservedEvent event = InventoryReservedEvent.builder()
                     .eventId(UUID.randomUUID())
-                    .eventType("PAYMENT_COMPLETED")
-                    .orderId(order.getOrderId())
-                    .paymentId(UUID.randomUUID())
-                    .createdAt(Instant.now())
+                    .eventType("INVENTORY_RESERVED")
+                    .orderId(payment.getOrderId())
                     .status("SUCCESS")
+                    .createdAt(Instant.now())
                     .build();
 
-            log.info("Order event received: \n {}", order);
+            log.info("Payment completed event received: \n {}", payment);
             kafkaTemplate.send(
-                    KafkaTopics.PAYMENT_EVENTS,
-                    order.getOrderId().toString(),
+                    KafkaTopics.INVENTORY_EVENTS,
+                    payment.getOrderId().toString(),
                     event
             );
-            log.info("Payment event sent: \n {}", event);
+            log.info("Inventory reserved event sent: \n {}", event);
 
 
         } catch (Exception e) {
