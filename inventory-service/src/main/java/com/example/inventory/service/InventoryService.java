@@ -26,6 +26,7 @@ public class InventoryService {
 
             InventoryReservedEvent event = InventoryReservedEvent.builder()
                     .eventId(UUID.randomUUID())
+                    .uniqueTxnId(payment.getUniqueTxnId())
                     .eventType("INVENTORY_RESERVED")
                     .orderId(payment.getOrderId())
                     .status("SUCCESS")

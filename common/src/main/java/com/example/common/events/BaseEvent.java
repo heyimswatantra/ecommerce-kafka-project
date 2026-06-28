@@ -15,6 +15,8 @@ public class BaseEvent {
 
     private UUID eventId;
 
+    private UUID uniqueTxnId;
+
     private Instant createdAt;
 
     private String eventType;

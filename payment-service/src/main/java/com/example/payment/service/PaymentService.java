@@ -25,6 +25,7 @@ public class PaymentService {
 
             PaymentCompletedEvent event = PaymentCompletedEvent.builder()
                     .eventId(UUID.randomUUID())
+                    .uniqueTxnId(order.getUniqueTxnId())
                     .eventType("PAYMENT_COMPLETED")
                     .orderId(order.getOrderId())
                     .paymentId(UUID.randomUUID())

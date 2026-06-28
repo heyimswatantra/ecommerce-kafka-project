@@ -22,6 +22,7 @@ public class OrderService {
 
         OrderCreatedEvent event = OrderCreatedEvent.builder()
                 .eventId(UUID.randomUUID())
+                .uniqueTxnId(UUID.randomUUID())
                 .createdAt(Instant.now())
                 .eventType("ORDER_CREATED")
                 .orderId(UUID.fromString(orderId))
