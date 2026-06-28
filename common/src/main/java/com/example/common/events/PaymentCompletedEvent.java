@@ -3,6 +3,8 @@ package com.example.common.events;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
@@ -10,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class PaymentCompletedEvent extends BaseEvent {
 
-    private String orderId;
+    private UUID orderId;
 
-    private String paymentId;
+    private UUID paymentId;
 
     private String status;
 }

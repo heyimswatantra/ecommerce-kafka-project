@@ -1,4 +1,4 @@
-package com.example.order.config;
+package com.example.payment.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
