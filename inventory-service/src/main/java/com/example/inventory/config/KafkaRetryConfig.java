@@ -25,7 +25,7 @@ public class KafkaRetryConfig {
                         (record, ex) ->
                                 new TopicPartition(
                                         record.topic() + "-dlq",
-                                        record.partition()));
+                                        -1));
 
         ExponentialBackOffWithMaxRetries backOff =
                 new ExponentialBackOffWithMaxRetries(3);

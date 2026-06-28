@@ -19,9 +19,16 @@ public class InventoryService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    private final ProcessedEventStore processedEventStore;
+
     private final AtomicInteger attempts = new AtomicInteger();
 
     public void reserveInventory(PaymentCompletedEvent payment) {
+
+        if (processedEventStore.alreadyProcessed(payment.getEventId())) {
+            log.warn("Duplicate event ignored {}", payment.getEventId());
+            return;
+        }
 
         try {
             Thread.sleep(2000); // simulate payment delay
@@ -60,7 +67,7 @@ public class InventoryService {
         );
 
         // mock retry logic
-        if (currentAttempt < 4) {
+        if (currentAttempt < 5) {
             throw new RuntimeException("Inventory DB unavailable");
         }
 
