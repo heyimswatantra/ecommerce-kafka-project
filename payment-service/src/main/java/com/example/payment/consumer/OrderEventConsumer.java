@@ -18,7 +18,7 @@ public class OrderEventConsumer {
 
     @KafkaListener(
             topics = KafkaTopics.ORDER_EVENTS,
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "orderKafkaListenerContainerFactory"
     )    public void consume(OrderCreatedEvent event) {
 
         log.info("Received order event: {}", event.getOrderId());
@@ -27,10 +27,11 @@ public class OrderEventConsumer {
     }
 
     @KafkaListener(
-            topics = KafkaTopics.PAYMENT_REFUNDS
+            topics = KafkaTopics.PAYMENT_REFUNDS,
+            containerFactory = "refundKafkaListenerContainerFactory"
     )
     public void refund(PaymentRefundRequestedEvent event) {
-
+        log.info("Payment Refund event: \n{}", event);
         paymentService.refund(event);
     }
 }

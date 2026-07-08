@@ -75,6 +75,8 @@ public class PaymentService {
                     event.getOrderId().toString(),
                     paymentRefundedEvent);
 
+            log.info("Payment refunded event sent to topic");
+
         } catch (Exception e) {
             throw new RuntimeException("Payment refund failed", e);
         }
