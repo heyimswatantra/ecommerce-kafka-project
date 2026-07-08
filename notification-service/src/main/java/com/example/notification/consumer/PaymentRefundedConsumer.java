@@ -16,7 +16,7 @@ public class PaymentRefundedConsumer {
 
     @KafkaListener(
             topics = KafkaTopics.PAYMENT_REFUNDED,
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "refundKafkaListenerContainerFactory"
     )
     public void consume (PaymentRefundedEvent event) {
 

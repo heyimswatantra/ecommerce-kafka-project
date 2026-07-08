@@ -1,6 +1,8 @@
 package com.example.notification.config;
 
 import com.example.common.events.InventoryReservedEvent;
+import com.example.common.events.PaymentRefundRequestedEvent;
+import com.example.common.events.PaymentRefundedEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -19,16 +21,16 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    @Bean
-    public ConsumerFactory<String, InventoryReservedEvent> consumerFactory (
+    private <T> ConsumerFactory<String, T> createConsumerFactory(
+            Class<T> eventType,
             KafkaProperties properties,
-            ObjectMapper objectMapper
-    ) {
+            ObjectMapper objectMapper) {
+
         Map<String, Object> config =
                 new HashMap<>(properties.buildConsumerProperties());
 
-        JsonDeserializer<InventoryReservedEvent> deserializer =
-                new JsonDeserializer<>(InventoryReservedEvent.class, objectMapper);
+        JsonDeserializer<T> deserializer =
+                new JsonDeserializer<>(eventType, objectMapper);
 
         deserializer.addTrustedPackages("com.example.common.events");
         deserializer.setUseTypeHeaders(false);
@@ -37,18 +39,52 @@ public class KafkaConsumerConfig {
                 config,
                 new StringDeserializer(),
                 deserializer);
+    }
 
+    @Bean
+    public ConsumerFactory<String, InventoryReservedEvent> inventoryConsumerFactory(
+            KafkaProperties properties,
+            ObjectMapper objectMapper) {
+
+        return createConsumerFactory(
+                InventoryReservedEvent.class,
+                properties,
+                objectMapper);
+    }
+
+    @Bean
+    public ConsumerFactory<String, PaymentRefundedEvent> refundConsumerFactory(
+            KafkaProperties properties,
+            ObjectMapper objectMapper) {
+
+        return createConsumerFactory(
+                PaymentRefundedEvent.class,
+                properties,
+                objectMapper);
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, InventoryReservedEvent>
-    kafkaListenerContainerFactory(
-            ConsumerFactory<String, InventoryReservedEvent> consumerFactory) {
+    inventoryKafkaListenerContainerFactory(
+            ConsumerFactory<String, InventoryReservedEvent> inventoryConsumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory<String, InventoryReservedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
-        factory.setConsumerFactory(consumerFactory);
+        factory.setConsumerFactory(inventoryConsumerFactory);
+
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentRefundedEvent>
+    refundKafkaListenerContainerFactory(
+            ConsumerFactory<String, PaymentRefundedEvent> refundConsumerFactory) {
+
+        ConcurrentKafkaListenerContainerFactory<String, PaymentRefundedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+
+        factory.setConsumerFactory(refundConsumerFactory);
 
         return factory;
     }
