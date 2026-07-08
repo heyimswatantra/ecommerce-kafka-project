@@ -72,8 +72,8 @@ public class InventoryService {
         }
 
 //        push to {topic}-dlq
-//        throw new RuntimeException("Something went wrong");
+        throw new RuntimeException("Something went wrong");
 
-        log.info("Inventory reserved.");
+//        log.info("Inventory reserved.");
     }
 }
